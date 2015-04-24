@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 
 
 /**
  * This is a collection of useful this and thats
@@ -10,72 +10,78 @@
  * @link https://github.com/DeveintLabs/CI-Template-Loader
  * */
 
-class Arena
+/**
+ * CodeIgniter disable direct access
+ * 
+ * Uncomment this line if you are using 
+ * this library in CodeIgniter
+ * 
+ * */
+// if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Utilities
 {
 
-
-	public function msgBox($msg, $title='Error!', $class='alert-error',$close=true){
-
-		/*IMAGE HACK*/
-		if($class=='alert-error'){
-			$icon = 'icon-remove-sign';
-			$class = 'alert-error alert-danger'; //BS3 hack
-		} else if($class=='alert-info') {
-			$icon = 'icon-info-sign';
-		} else if($class=='alert-success') {
-			$icon = 'icon-ok-sign';
-		} else if($class=='alert-warning') {
-			$icon = 'icon-exclamation-sign';
-		} else if($class=='alert-danger') { //BS 3 icon hack
-			$icon = 'icon-remove-sign';
-		}
-
-		
-		echo '<div class="alert '.$class.'">';
-			if($close=='TRUE'){
-				echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
-			}
-		echo '<strong><i class="'.$icon.'"></i> '.$title.'</strong><br>
-				'.$msg.'
-				</div>';
-	}
-
 	/**
-	* Render msgBox HTML. Good for rendering msgBoxes JSON responses
-	* Was actually built for this purpose
-	* @param $msg, $title, $class, $close
-	*/
-	public function renderMsgBox($msg, $title='Error!', $class='alert-error',$close=true){
+	 * Render Bootstrap Messagebox
+	 * 
+	 * Generate a full bootstrap message box
+	 * with a title, icon, message and close icon
+	 * 
+	 * @param string $messageString
+	 * @param string $title
+	 * @param string $cssClass
+	 * @param boolean $closeable
+	 * 
+	 * @return string
+	 * */
+	public function msgBox($messageString, $title='Information', $cssClass='alert-info', $closeable=true, $icon=true){
 
-		/*IMAGE HACK*/
-		if($class=='alert-error' || $class=='alert-danger'){
-			$class = 'alert-error alert-danger';
-			$icon = 'icon-remove-sign';
-		} else if($class=='alert-info') {
-			$icon = 'icon-info-sign';
-		} else if($class=='alert-success') {
-			$icon = 'icon-ok-sign';
-		} else if($class=='alert-warning') {
-			$icon = 'icon-exclamation-sign';
+		# Fontawesome icons
+		if($icon){
+			if($cssClass=='alert-error'){ # BS2 hack
+				$icon = 'icon-remove-sign';
+				$cssClass = 'alert-error alert-danger'; 
+			} else if($cssClass=='alert-info') {
+				$icon = 'icon-info-sign';
+			} else if($cssClass=='alert-success') {
+				$icon = 'icon-ok-sign';
+			} else if($cssClass=='alert-warning') {
+				$icon = 'icon-exclamation-sign';
+			} else if($cssClass=='alert-danger') { # BS 2 icon hack
+				$icon = 'icon-remove-sign';
+			}
 		}
-
-		$html = '';
 		
-		$html .= '<div class="alert '.$class.'">';
-		if($close=='TRUE'){
+		$html = null;
+		
+		$html .= '<div class="alert '.$cssClass.'">';
+		if($closeable=='TRUE'){
 			$html .= '<button type="button" class="close" data-dismiss="alert">&times;</button>';
 		}
-		$html .= '<strong><i class="'.$icon.'"></i> '.$title.'</strong><br>
-				'.$msg.'
+		$html .= '<strong><i class="'.@$icon.'"></i> '.$title.'</strong><br>
+				'.$messageString.'
 				</div>';
 
 		return $html;
 	}
 
-	/*Draw a mini message box*/
-	public function miniBox($msg, $class='alert-error',$close=true){
+	
+	/**
+	 * Render Bootstrap mini-messagebox
+	 * 
+	 * Generate a mini bootstrap message box
+	 * with a message, icon and close button
+	 * 
+	 * @param string $messageString
+	 * @param string $cssClass
+	 * @param boolean $closeable
+	 * 
+	 * @return string $html
+	 * */
+	public function miniBox($messageString, $class='alert-info',$closeable=true){
 
-		/*IMAGE HACK*/
+		# Fontawesome icons
 		if($class=='alert-error' || $class=='alert-danger'){
 			$icon = 'icon-remove-sign';
 		} else if($class=='alert-info') {
@@ -85,67 +91,39 @@ class Arena
 		} else if($class=='alert-warning') {
 			$icon = 'icon-exclamation-sign';
 		}
-		
-		echo '<div class="alert '.$class.' text-center">';
-			if($close=='TRUE'){
-				echo '<button type="button" class="close" data-dismiss="alert">&times;</button>';
-			}
-		echo '<strong><i class="'.$icon.'"></i></strong>
-				'.$msg.'
-				</div>';
-	}
 
-	/*
-	* Seeds a number of specified length.
-	* CONFIG NOTES
-	* 	The length of the seed is determined by the value in config file
-	* Returns $seed
-	*/
-	public function seed($image=false){
-		
-		$seed = '';
-		$index = 1;
+		$html = null;
 
-		while($index <= 20){
-			$generator = rand(0,9);
-			$seed .= $generator;
-			$index ++;
+		$html = '<div class="alert '.$class.' text-center">';
+
+		if($closeable){
+			$html .= '<button type="button" class="close" data-dismiss="alert">&times;</button>';
 		}
 
+		$html .= '<strong><i class="'.$icon.'"></i></strong>'.$messageString.'</div>';
 
-		return $seed;
+		return $html;
 	}
 
-	/* 
-	* Hashes a term with a specified algorithm.
-	* Default is SHA512
-	* CONFIG NOTES
-	* 	Algorithm is determined by the value in the config file
-	* Return $hash.
-	* @deprecated NOTE!!!! [THIS METHOD IS FLAWED] !!!!NOTE
-	*/
-	public function hash($term){
-		$hash = hash($this->defaultHashAlgorithm, $term);
-		return $hash;
-	}
-
-	
-	
-	public function formatTime(){
-		return date('Y-m-d H:i:s');
-	}
-
-
-
+	/**
+	 * Title Case
+	 * 
+	 * Capitalize every first letter of words 
+	 * in a string, with exception of prepositions 
+	 * and other user-defined words
+	 * 
+	 * @param string $string
+	 * 
+	 * @return string $string
+	 * */
 	public function titleCase($string){
+
 		$names = explode(' ', $string);
 
-		// Array of words to ignore while changing case
+		# Array of words to ignore while changing case
 		$prepositions = array(
-			'a','an','the','their','our'
+			'a','an','the','their','our','is'
 		);
-
-		// require 'semantics/prepositions.php'; 
 
 	    foreach ($names as $key => $value) {
 	    	if(!in_array($value, $prepositions)){
@@ -157,17 +135,25 @@ class Arena
 	}
 
 
-	/*
-	* Returns MySQL format of current time
-	*/
+	/**
+	 * Date/Time formatter
+	 * 
+	 * Formats a passed in MySQL DateTime string 
+	 * to a more readable format. It can also return
+	 * the current date/time in multiple formats if 
+	 * no input date is specified
+	 * 
+	 * @param string $outputFormat [TIMESTAMP, READABLE, PROFILE, BLOG]
+	 * @param string $dateInput
+	 * 
+	 * @return string $time
+	 * */
 	public function formatDate($format='TIMESTAMP',$time=''){
 
-		/*Create time*/
+		# Use current time if none isset
 		if(empty($time)){
 			$time = date('Y-m-d H:i:s');
 		}
-
-		/*Format time*/
 
 		if($format == 'TIMESTAMP'){
 			$time = date('Y-m-d H:i:s', strtotime($time));
@@ -175,37 +161,63 @@ class Arena
 			$time = date('M j, Y', strtotime($time));
 		} else if($format == 'PROFILE') {
 			$time = date('l, jS F Y', strtotime($time));
-
 		}  else if($format == 'BLOG') {
 			$time = date('F j, Y', strtotime($time));
 		}
+
+		# TODO add more formats
 
 		return $time;
 	}
 
 
+	/**
+	 * Facebook Time
+	 * 
+	 * Formats dates from other formats to 
+	 * "Facebook format" e.g 2 seconds ago 
+	 * or 5 minutes ago
+	 * 
+	 * @param string $date
+	 * @param int $granularity
+	 * 
+	 * @return string $retVal
+	 * 
+	 * */
+	function fbTime($date, $granularity=1, $format='long') {
 
-
-	// DISPLAYS COMMENT POST TIME AS "1 year, 1 week ago" or "5 minutes, 7 seconds ago", etc...
-	function fbTime($date,$granularity=1) {
 	    $date = strtotime($date);
 	    $difference = time() - $date;
 
-	    // var_dump($date);
 
-	    $periods = array('decade' => 315360000,
-	        'year' => 31536000,
-	        'month' => 2628000,
-	        'week' => 604800, 
-	        'day' => 86400,
-	        'hour' => 3600,
-	        'minute' => 60,
-	        'second' => 1);
+	    if($format=='long'){
+		    $periods = array(
+		    	'decade' => 315360000,
+		        'year' => 31536000,
+		        'month' => 2628000,
+		        'week' => 604800, 
+		        'day' => 86400,
+		        'hour' => 3600,
+		        'minute' => 60,
+		        'second' => 1
+	        );
+	    } else if($format=='short'){
+	    	$periods = array(
+		    	'dec' => 315360000,
+		        'yr' => 31536000,
+		        'mon' => 2628000,
+		        'wk' => 604800, 
+		        'day' => 86400,
+		        'hr' => 3600,
+		        'min' => 60,
+		        'sec' => 1
+	        );
+	    }
 
 	    $retval = '';
 
-	    if ($difference < 5) { // less than 5 seconds ago, let's say "just now"
-	        $retval = "just now";
+	    if ($difference < 5) {
+	        $retval = "just now"; # less than 5 secs
 	    } else {
 
 	        foreach ($periods as $key => $value) {
@@ -220,54 +232,10 @@ class Arena
 
 	            if ($granularity == '0') { break; }
 	        }
-
-	        /*Add ago*/
-            // $retval = $retval.' ago';
-
         }   
-
-        // var_dump($retval);
         
-        return $retval;      
-	}
+        return $retval;  
 
-
-
-	/*
-	* removes artifacts that destroy language syntax
-	*
-	* A good example is the string [I don't] know in 
-	* a Javascript codebase is converted to [I Dont Know] string*/
-	public function safeCase($string){
-		/*
-		* Find apostrophes
-		*/
-		$string = str_replace("'",'',$string);
-
-		/*
-		* Find double quotes
-		*/
-		$string = str_replace('"','',$string);
-
-
-
-		return $string;
-	}
-
-
-
-	/*Sentence case*/
-	function sentenceCase($string){
-
-	    $names = explode(' ', $string);
-
-	    foreach ($names as $key => $value) {
-	        $names[$key] = strtolower($value);
-	    }
-
-	    $names[0] = ucfirst($names[0]);
-
-	    return implode(' ', $names);
 	}
 
 }
